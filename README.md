@@ -17,30 +17,37 @@
 | 🔄 **جلسة دائمة** | شغّل Chrome مرة واحدة، عدّ السكربتات وتبقى النافذة والتبويبات والكوكيز حيّة |
 | 🐍 **واجهة سيلينيوم كاملة** | `By` · `Keys` · `Select` · `ActionChains` · `WebDriverWait` · `EC` + كل الاستثناءات |
 | 🎭 **Stealth مدمج** | إخفاء آثار الأتمتة بـ JavaScript خاص — بلا أي مكتبة ثالثة |
-| 📁 **نظام بروفايلات** | بروفايل دائم افتراضي · بروفايلات مسمّاة · بروفايلات مؤقتة تُحذف تلقائياً |
-| 🍪 **حقن الكوكيز** | لصق جدول DevTools → `new_coc.txt` → تحويله عبر `convert_cookies.py` |
+| 📁 **نظام بروفايلات** | بروفايل دائم افتراضي · بروفايلات مسمّاة · بروفايلات مؤقتة تُحذف تلقائياُ |
+| 🍪 **حقن الكوكيز** | `browser.cookies_load()` → `browser.inject(driver, cookies)` |
 | 🌐 **بروكسي متعدد** | `proxy_http` · `proxy_https` · `proxy_socks4` · `proxy_socks5` + دالة `proxy_check` |
-| 🖥️ **CLI جاهز** | أوامر مثل `start` · `attach` · `stop` · `status` · `profiles` مباشرة من التيرمينال |
+| 🖥️ **CLI جاهز** | أوامر `start` · `attach` · `stop` · `status` · `profiles` مباشرة من التيرمينال |
 | 🧪 **فحص ذاتي 20/20** | اختبارات شاملة لكل ميزة للتأكد من عدم regressions |
-| 🪟 **متعدد المنصات** | يعمل على Windows / macOS / Linux (يكشف Chrome تلقائياً) |
+| 🪟 **متعدد المنصات** | يعمل على Windows / macOS / Linux (يكشف Chrome تلقائياُ) |
 
 ---
 
 ## 📦 التثبيت
 
+### عبر pip (موصى به)
+
 ```bash
-pip install selenium>=4.48
+pip install nibraslite
 ```
 
-لا تحتاج تثبيت أي حزمة إضافية — المكتبة تعتمد على Selenium فقط.
+### من المصدر
 
-تأكد من وجود Chrome أو Chromium مُثبَّت على جهازك.
+```bash
+pip install selenium>=4.48
+# تأكد من وجود Chrome أو Chromium مُثبّت على جهازك
+```
+
+المكتبة تعتمد على Selenium فقط — لا تحتاج تثبيت حزم إضافية.
 
 ---
 
 ## 🚀 الاستخدام السريع
 
-### 1. تشغيل المتصفح والبدء بالفحص
+### 1. تشغيل المتصفح والبدء
 
 ```python
 import browser
@@ -49,8 +56,8 @@ import browser
 driver = browser.ensure("https://example.com")
 
 # استخدام كامل واجهة السيلينيوم
-driver.find_element("By.NAME", "q").send_keys("nibras")
-driver.find_element("By.NAME", "q").submit()
+driver.find_element(By.NAME, "q").send_keys("nibras")
+driver.find_element(By.NAME, "q").submit()
 ```
 
 ### 2. الـ REPL التفاعلي
@@ -97,9 +104,7 @@ sel_nibras/
 ├── probe.py            # فاحص سريع لأي صفحة (DOM + stealth report)
 ├── convert_cookies.py  # يحوّل لصق DevTools → JSON قابل للحقن
 ├── browser_guide.html  # دليل عربي بصري للمستخدم
-├── README.md           # هذا الملف
-├── _profile/           # البروفايل الدائم الافتراضي (gitignored)
-└── profiles/           # بروفايلات مسمّاة إضافية (gitignored)
+└── README.md           # هذا الملف
 ```
 
 ---
@@ -128,7 +133,6 @@ python selfcheck.py                    # تشغيل الفحص الذاتي
 | `NIBRAS_UA` | — | تجاوز User-Agent |
 | `NIBRAS_HEADLESS` | `0` | `1` = وضع بدون واجهة |
 | `NIBRAS_CHROME` | — | مسار Chrome.exe صريح |
-| `NIBRAS_CHROME_VERSION` | — | إصدار Chrome المُستهدف |
 
 ---
 
@@ -160,7 +164,7 @@ permissions.query(notifications) // لا يعيد "denied"
 | **مسار صريح** | أي مسار تختاره | ✅ نعم | `browser.py start --profile /path/to/dir` |
 | **مؤقت** | OS temp dir | ❌ لا (إلا `--keep`) | `browser.py start --temp` |
 
-لتشغيل حسابين في وقت واحد: `--name a` و `--name b` — المكتبة تختار منافذ حرة تلقائياً.
+لتشغيل حسابين في وقت واحد: `--name a` و `--name b` — المكتبة تختار منافذ حرة تلقائياُ.
 
 ---
 
@@ -247,7 +251,7 @@ browser.proxy_combine("socks5", "addr", port)
 ```python
 from browser import Browser, By
 b = Browser.ensure("https://example.com")
-b.find_element(By.ID, "q")       # → دالة سيلينيوم أصلية (marshaled تلقائياً)
+b.find_element(By.ID, "q")       # → دالة سيلينيوم أصلية (marshaled تلقائياُ)
 b.click("#go")                   # → دالة مكتبتنا
 b.wait("#t", "visible", 5)       # → دالة مكتبتنا
 b.driver                         # → WebDriver الخام
@@ -270,20 +274,11 @@ python probe.py
 
 ---
 
-## ⚠️ ملاحظات مهمة
-
-- **لا تستخدم `driver.quit()`** — يغلق النافذة الدائمة؛ استخدم `browser.close_browser()` أو `browser.py stop`
-- **لا ترفع `new_coc.txt` أو `session_cookies.json`** — تحوي بيانات دخول سرّية
-- البروفايل `_profile/` يعيش بين الجلسات = تسجيل الدخول محفوظ
-- `NIBRAS_*` هي البادئة الوحيدة المعتمدة حالياً (تم التصحيح من `SEL_BINRAS_*`)
-
----
-
 ## 🤝 المساهمة
 
 1. اقرأ [README.md](README.md) (هذا الملف) قبل أي تعديل
 2. أضف الدالة الجديدة في `browser.py`
-3. أضف اختباراً في `selfcheck.py`
+3. أضف اختباراُ في `selfcheck.py`
 4. حدّث هذا الملف
 5. اختبر: `python selfcheck.py`
 
