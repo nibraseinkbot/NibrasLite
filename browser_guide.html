@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NibrasLite — دليل المكتبة (نبراس الخفيف)</title>
+<style>
+  :root{
+    --bg:#f5f7fb; --card:#ffffff; --ink:#0f172a; --muted:#5b6577;
+    --primary:#4f46e5; --primary2:#06b6d4; --line:#e6eaf2;
+    --code-bg:#0f172a; --code-ink:#e2e8f0; --ok:#10b981; --warn:#f59e0b;
+    --radius:16px; --shadow:0 10px 30px rgba(15,23,42,.08);
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family:"Segoe UI",Tahoma,"Noto Naskh Arabic",system-ui,sans-serif;
+    line-height:1.9; font-size:16.5px;
+  }
+  a{color:var(--primary); text-decoration:none}
+  a:hover{text-decoration:underline}
+
+  header.hero{
+    background:linear-gradient(120deg,var(--primary),var(--primary2));
+    color:#fff; padding:54px 24px 64px; text-align:center; position:relative;
+    overflow:hidden;
+  }
+  header.hero::after{
+    content:""; position:absolute; inset:auto -10% -60% -10%; height:220px;
+    background:radial-gradient(closest-side,rgba(255,255,255,.25),transparent);
+  }
+  header.hero h1{margin:0 0 8px; font-size:2.5rem; letter-spacing:.5px}
+  header.hero p{margin:0; opacity:.95; font-size:1.05rem}
+  .badges{margin-top:18px; display:flex; gap:10px; justify-content:center; flex-wrap:wrap}
+  .badge{
+    background:rgba(255,255,255,.18); border:1px solid rgba(255,255,255,.35);
+    padding:5px 14px; border-radius:999px; font-size:.85rem; backdrop-filter:blur(4px);
+  }
+  .wrap{max-width:1020px; margin:-34px auto 60px; padding:0 18px}
+  .card{
+    background:var(--card); border:1px solid var(--line); border-radius:var(--radius);
+    box-shadow:var(--shadow); padding:26px 26px; margin:22px 0;
+  }
+
+  nav.toc{
+    display:flex; flex-wrap:wrap; gap:8px; justify-content:center;
+    background:#fff; border:1px solid var(--line); border-radius:999px;
+    padding:12px 16px; box-shadow:var(--shadow); position:sticky; top:12px; z-index:5;
+  }
+  nav.toc a{
+    font-size:.85rem; padding:6px 12px; border-radius:999px; color:var(--muted);
+  }
+  nav.toc a:hover{background:#eef1ff; color:var(--primary); text-decoration:none}
+
+  h2{
+    font-size:1.45rem; margin:6px 0 14px; display:flex; align-items:center; gap:10px;
+  }
+  h2 .dot{
+    width:12px;height:12px;border-radius:50%;
+    background:linear-gradient(135deg,var(--primary),var(--primary2)); display:inline-block;
+  }
+  h3{margin:22px 0 8px; font-size:1.08rem; color:#243044}
+  p.lead{color:var(--muted)}
+
+  pre,code{font-family:"Cascadia Code",Consolas,"Courier New",monospace}
+  pre{
+    direction:ltr; text-align:left; background:var(--code-bg); color:var(--code-ink);
+    padding:16px 18px; border-radius:12px; overflow:auto; font-size:.9rem; line-height:1.7;
+    border:1px solid #1e293b;
+  }
+  pre .c{color:#7dd3fc} pre .s{color:#86efac} pre .k{color:#fca5a5}
+  code.inline{
+    direction:ltr; unicode-bidi:embed; background:#eef1ff; color:#3730a3;
+    padding:2px 7px; border-radius:6px; font-size:.86em;
+  }
+
+  table{width:100%; border-collapse:collapse; margin:10px 0; font-size:.93rem}
+  th,td{padding:10px 12px; border-bottom:1px solid var(--line); text-align:right; vertical-align:top}
+  th{background:#f7f9ff; color:#334155; font-weight:700}
+  tr:hover td{background:#fafbff}
+  td code,th code{font-size:.85em}
+  .ltl{direction:ltr; unicode-bidi:embed; text-align:left}
+
+  .grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:14px}
+  .tile{border:1px solid var(--line); border-radius:12px; padding:16px; background:#fbfcff}
+  .tile h4{margin:0 0 6px; font-size:1rem}
+  .tile p{margin:0; color:var(--muted); font-size:.9rem}
+
+  .flow{display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:10px; margin:8px 0}
+  .step{background:#eef1ff; border:1px solid #dbe1ff; border-radius:12px; padding:10px 14px; font-size:.9rem}
+  .arrow{color:var(--primary); font-weight:700}
+
+  .note{
+    border-right:5px solid var(--primary); background:#f4f6ff;
+    padding:12px 16px; border-radius:10px; margin:14px 0;
+  }
+  .note.warn{border-color:var(--warn); background:#fff8ec}
+  .note.ok{border-color:var(--ok); background:#eefcf5}
+
+  ul.clean{margin:8px 0; padding-right:22px}
+  ul.clean li{margin:4px 0}
+
+  .result{display:flex; flex-wrap:wrap; gap:8px}
+  .pill{font-size:.82rem; padding:4px 10px; border-radius:999px; border:1px solid}
+  .pill.ok{color:#065f46; background:#e7fbf1; border-color:#bfe9d5}
+  .footer{text-align:center; color:var(--muted); font-size:.85rem; padding:30px 10px 50px}
+  .kbd{background:#0f172a;color:#e2e8f0;border-radius:6px;padding:1px 7px;font-size:.82em;direction:ltr;unicode-bidi:embed}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <h1>🧩 NibrasLite — نبراس الخفيف</h1>
+  <p>أداة مساعدة <b>خفيفة</b> لسيلينيوم — بجلسة <b>دائمة لا تُغلق</b> + تحسينات كشف بسيطة</p>
+  <div class="badges">
+    <span class="badge">Selenium 4 Helper</span>
+    <span class="badge">Persistent Session</span>
+    <span class="badge">Light Stealth</span>
+    <span class="badge">Any Website</span>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <nav class="toc">
+    <a href="#why">لماذا؟</a>
+    <a href="#files">الملفات</a>
+    <a href="#quick">البداية السريعة</a>
+    <a href="#how">كيف تعمل</a>
+    <a href="#api">واجهة المكتبة</a>
+    <a href="#proxy">البروكسي</a>
+    <a href="#repl">أوامر REPL</a>
+    <a href="#stealth">الـ Stealth</a>
+    <a href="#proof">إثبات</a>
+    <a href="#env">الإعدادات</a>
+  </nav>
+
+  <!-- ============ WHY ============ -->
+  <section class="card" id="why">
+    <h2><span class="dot"></span>لماذا هذه المكتبة؟</h2>
+    <p class="lead">
+      سيلينيوم الطبيعي يُشغّل المتصفح ثم <b>يُغلقه</b> عند انتهاء السكربت. هنا نعكس الفكرة:
+      المتصفح يُشغّل كـ<b>عملية مستقلة</b>، وكل سكربت لاحق <b>يتعلّق</b> به ولا يملكه — فيبقى حياً.
+      <br><b>ملاحظة:</b> نبراس الخفيف أداة مساعدة خفيفة لسيلينيوم تضيف ميزات قليلة للتخفي (stealth
+      ضعيف غير مُجرب ضد أنظمة كشف قوية)، وليست بديلاً قوياً ضد أدوات الكشف المتقدمة.
+    </p>
+    <div class="grid">
+      <div class="tile"><h4>♻️ لا يُغلق أبداً</h4><p>تُضيف سطر سيلينيوم جديداً وتُكمل على نفس النافذة.</p></div>
+      <div class="tile"><h4>🍪 كوكيز وأدوات</h4><p>حفظ/حقن/تصدير الكوكيز، وحفظ تسجيل الدخول.</p></div>
+      <div class="tile"><h4>🥷 مقاومة كشف</h4><p>حتّى <code class="inline">navigator.webdriver</code> يظهر مخفياً.</p></div>
+      <div class="tile"><h4>🌐 أي موقع</h4><p>لا شيء خاص بـCrashlytics — عام بالكامل.</p></div>
+    </div>
+  </section>
+
+  <!-- ============ FILES ============ -->
+  <section class="card" id="files">
+    <h2><span class="dot"></span>الملفات</h2>
+    <pre>sel_nibras/
+├─ browser.py        ← 🧩 المكتبة العامة + REPL  (القلب)
+├─ probe.py          ← فاحص بنية أي صفحة
+├─ example.py        ← مثال استخدام عام (انسخه لأي موقع)
+├─ browser_guide.html← هذا الدليل
+├─ convert_cookies.py← تحويل لصق DevTools → JSON
+├─ _profile/         ← ملف المتصفح الدائم (تسجيل الدخول يبقى)
+└─ output/           ← المخرجات والدلاءات</pre>
+  </section>
+
+  <!-- ============ QUICK ============ -->
+  <section class="card" id="quick">
+    <h2><span class="dot"></span>البداية السريعة</h2>
+    <h3>1) افتح الجلسة مرّة واحدة (تبقى مفتوحة)</h3>
+    <pre>python sel_nibras\browser.py start --url https://any-site.com</pre>
+    <div class="note">
+      🕵️ <b>User-Agent مخصص:</b> من الطرفية <code class="inline">browser.py start --ua "Mozilla/5.0 (…)"</code>
+      أو من بايثون <code class="inline">browser.ensure(url, ua="Mozilla/5.0 (…)")</code>.
+      ويمكنك تمرير أي أعلام كثيرة عبر <code class="inline">extra_args=["--window-size=1400,900"]</code>.
+    </div>
+    <h3>2) أكمل عليها وقت ما تشاء (REPL)</h3>
+    <pre>python sel_nibras\browser.py attach</pre>
+    <div class="note">
+      للتعلّق من سكربت بايثون بدل الـREPL:
+      <pre>import browser
+d = browser.ensure()                 <span class="c"># نفس نافذة Chrome المفتوحة</span>
+browser.click(d, "#save-button")     <span class="c"># سطر جديد... بلا إغلاق أو إعادة فتح</span></pre>
+    </div>
+    <h3>الإيقاف</h3>
+    <pre><span class="c"># quit داخل REPL = انفصال فقط (المتصفح يبقى)</span>
+python sel_nibras\browser.py stop    <span class="c"># إغلاق فعلي لنسخة هذا الملف فقط</span></pre>
+  </section>
+
+  <!-- ============ HOW ============ -->
+  <section class="card" id="how">
+    <h2><span class="dot"></span>كيف تعمل الفكرة؟</h2>
+    <div class="flow">
+      <span class="step">browser.py start</span>
+      <span class="arrow">➜</span>
+      <span class="step">Chrome منفصل (منفذ 9222 + ملف دائم)</span>
+      <span class="arrow">➜</span>
+      <span class="step">attach عبر debuggerAddress</span>
+      <span class="arrow">➜</span>
+      <span class="step">السكربت ينتهي… والمتصفح يبقى</span>
+    </div>
+    <p class="lead">
+      المفتاح: Selenium لا <b>يملك</b> المتصفح عند التعلّق، بل يتصل به عبر بروتوكول CDP.
+      لذلك انتهاء السكربت = قطع الاتصال فقط، لا إغلاق المتصفح.
+    </p>
+  </section>
+
+  <!-- ============ API ============ -->
+  <section class="card" id="api">
+    <h2><span class="dot"></span>واجهة المكتبة (API)</h2>
+
+    <h3>🚀 دورة الحياة</h3>
+    <table>
+      <tr><th>الدالة</th><th>الوظيفة</th></tr>
+      <tr><td class="ltl"><code>start(port, profile, headless)</code></td><td>يُشغّل Chrome منفصلاً ويتركه حياً.</td></tr>
+      <tr><td class="ltl"><code>attach(port)</code></td><td>يتعلّق بنسخة Chrome المفتوحة.</td></tr>
+      <tr><td class="ltl"><code>ensure(url, ...)</code></td><td>الأسهل: تشغيل إن لزم + تعلّق + تنقّل + stealth.</td></tr>
+      <tr><td class="ltl"><code>is_alive(port)</code></td><td>هل الجلسة تعمل؟</td></tr>
+      <tr><td class="ltl"><code>close_browser(driver)</code></td><td>إغلاق لطيف عبر CDP.</td></tr>
+      <tr><td class="ltl"><code>kill(port, profile)</code></td><td>إيقاف Chrome الخاص بهذا الملف فقط.</td></tr>
+    </table>
+
+    <h3>🍪 الكوكيز</h3>
+    <table>
+      <tr><th>الدالة</th><th>الوظيفة</th></tr>
+      <tr><td class="ltl"><code>cookies_load(path)</code></td><td>قراءة كوكيز من JSON.</td></tr>
+      <tr><td class="ltl"><code>cookies_save(driver, path)</code></td><td>تصدير كوكيز المتصفح الحالي.</td></tr>
+      <tr><td class="ltl"><code>inject(driver, list)</code></td><td>حقن عبر CDP (يتعامل مع <code class="inline">__Host-*</code>).</td></tr>
+      <tr><td class="ltl"><code>clear(driver, domain)</code></td><td>مسح الكوكيز (الكل أو لنطاق).</td></tr>
+      <tr><td class="ltl"><code>list_cookies(driver)</code></td><td>طباعة الأسماء/النطاقات.</td></tr>
+      <tr><td class="ltl"><code>from_devtools_table(text)</code></td><td>تحويل لصق DevTools إلى JSON.</td></tr>
+    </table>
+
+    <h3>⏳ العناصر والانتظار (تحقّق نظيف)</h3>
+    <table>
+      <tr><th>الدالة</th><th>الوظيفة</th></tr>
+      <tr><td class="ltl"><code>wait(driver, sel, state, timeout)</code></td><td>ينتظر عنصراً: <code class="inline">present</code> · <code class="inline">visible</code> · <code class="inline">clickable</code> ثم يُرجعه.</td></tr>
+      <tr><td class="ltl"><code>wait_all(driver, sel, timeout)</code></td><td>ينتظر أول قائمة عناصر.</td></tr>
+      <tr><td class="ltl"><code>wait_gone(driver, sel, timeout)</code></td><td>ينتظر اختفاء العنصر (<code class="inline">True/False</code>).</td></tr>
+      <tr><td class="ltl"><code>exist · visible · clickable</code></td><td>فحوص فورية (أو مع <code class="inline">timeout</code>).</td></tr>
+      <tr><td class="ltl"><code>one(driver, sel, timeout) · find</code></td><td>عنصر واحد / كل العناصر.</td></tr>
+    </table>
+    <p class="lead">مبنية على <code class="inline">WebDriverWait</code> + <code class="inline">expected_conditions</code> من سيلينيوم — بلا حلقات انتظار يدوية.</p>
+
+    <h3>🖱️ التحكّم (أي موقع)</h3>
+    <table>
+      <tr><th>الدالة</th><th>الوظيفة</th></tr>
+      <tr><td class="ltl"><code>goto · back · forward · reload</code></td><td>تنقّل.</td></tr>
+      <tr><td class="ltl"><code>find(sel) · one(sel)</code></td><td>إيجاد عناصر.</td></tr>
+      <tr><td class="ltl"><code>click(sel) · clickn(n, sel)</code></td><td>نقر أول عنصر / العنصر رقم n.</td></tr>
+      <tr><td class="ltl"><code>type_text(sel, txt, clear, enter)</code></td><td>كتابة داخل حقل.</td></tr>
+      <tr><td class="ltl"><code>wait_for(sel, secs) · wait_gone</code></td><td>انتظار ظهور/اختفاء.</td></tr>
+      <tr><td class="ltl"><code>text() · dump(file) · screenshot(file)</code></td><td>النص / الحفظ / لقطة شاشة.</td></tr>
+      <tr><td class="ltl"><code>eval_js(js) · scroll(px)</code></td><td>جافاسكربت وتمرير.</td></tr>
+      <tr><td class="ltl"><code>tabs() · new_tab · switch_tab(i)</code></td><td>إدارة التبويبات.</td></tr>
+      <tr><td class="ltl"><code>accept_alert(accept)</code></td><td>قبول/إلغاء النوافذ المنبثقة.</td></tr>
+    </table>
+
+    <h3>🥷 الـ Stealth (تخفي خفيف)</h3>
+    <table>
+      <tr><th>الدالة</th><th>الوظيفة</th></tr>
+      <tr><td class="ltl"><code>stealth(driver)</code></td><td>يُخفي الإشارات على الصفحة الحالية وكل صفحة جديدة.</td></tr>
+      <tr><td class="ltl"><code>check_stealth(driver)</code></td><td>تقرير نجاح/فشل لكل إشارة.</td></tr>
+      <tr><td class="ltl"><code>print_stealth(driver)</code></td><td>طباعة التقرير بصيغة أنيقة.</td></tr>
+    </table>
+    <p class="lead">المحدّدات: اكتب <code class="inline">#id</code> أو <code class="inline">.cls</code> عادةً، أو <code class="inline">xpath://...</code> / <code class="inline">css:...</code> صراحةً.</p>
+
+    <h3>🧱 كائن Browser (يُمرّر كل واجهة سيلينيوم)</h3>
+    <pre>import browser
+from browser import Browser, By
+
+b = Browser.ensure("https://x.com")
+b.find_element(By.ID, "q")     <span class="c"># دالة سيلينيوم أصلية (يُمرّرها تلقائياً)</span>
+b.click("#go")                 <span class="c"># دالة المكتبة</span>
+b.driver                       <span class="c"># WebDriver الخام بالكامل</span></pre>
+    <p class="lead">المكتبة <b>تُعيد تصدير</b> واجهة سيلينيوم كاملة، فتكفيك هذه السطور:</p>
+    <pre>from browser import webdriver, By, Keys, Select, ActionChains, WebDriverWait, EC
+from browser import NoSuchElementException, TimeoutException   <span class="c"># ... والأخطاء</span></pre>
+  </section>
+
+  <!-- ============ REPL ============ -->
+  <section class="card" id="repl">
+    <h2><span class="dot"></span>أوامر REPL</h2>
+    <p class="lead">بعد <code class="inline">browser.py attach</code> اكتب الأوامر مباشرة:</p>
+    <table>
+      <tr><th>الأمر</th><th>الأمر</th></tr>
+      <tr><td class="ltl"><code>goto &lt;url&gt;</code></td><td class="ltl"><code>find &lt;sel&gt;</code></td></tr>
+      <tr><td class="ltl"><code>back · forward · reload</code></td><td class="ltl"><code>click &lt;sel&gt;</code></td></tr>
+      <tr><td class="ltl"><code>url · title · text</code></td><td class="ltl"><code>clickn &lt;n&gt; &lt;sel&gt;</code></td></tr>
+      <tr><td class="ltl"><code>dump &lt;name&gt;</code></td><td class="ltl"><code>type &lt;sel&gt; | &lt;text&gt;</code></td></tr>
+      <tr><td class="ltl"><code>wait &lt;sel&gt; [secs]</code></td><td class="ltl"><code>eval &lt;js&gt;</code></td></tr>
+      <tr><td class="ltl"><code>scroll [px]</code></td><td class="ltl"><code>shot [name]</code></td></tr>
+      <tr><td class="ltl"><code>tabs · tab &lt;n&gt; · newtab</code></td><td class="ltl"><code>cookies · csave &lt;file&gt;</code></td></tr>
+      <tr><td class="ltl"><code>stealth · status</code></td><td class="ltl"><code>quit</code> (انفصال فقط)</td></tr>
+    </table>
+  </section>
+
+  <!-- ============ STEALTH ============ -->
+  <section class="card" id="stealth">
+    <h2><span class="dot"></span>ماذا يُخفي الـ Stealth (ضعيف)؟</h2>
+    <div class="grid">
+      <div class="tile"><h4>navigator.webdriver</h4><p>تعريف مخفي يجعلها <code class="inline">false</code>.</p></div>
+      <div class="tile"><h4>plugins / mimeTypes</h4><p>قائمة واقعية غير فارغة.</p></div>
+      <div class="tile"><h4>الّلغات</h4><p><code class="inline">ar, en-US, en</code>.</p></div>
+      <div class="tile"><h4>window.chrome</h4><p>مع <code class="inline">chrome.runtime</code> وهمي سليم.</p></div>
+      <div class="tile"><h4>WebGL</h4><p>يُخفي SwiftShader ويُظهر كرتاً حقيقياً.</p></div>
+      <div class="tile"><h4>permissions</h4><p>تُطابق حالة الإشعارات الحقيقية.</p></div>
+      <div class="tile"><h4>hardwareConcurrency</h4><p>وقيمة <code class="inline">deviceMemory</code> معقولة.</p></div>
+      <div class="tile"><h4>iframe.contentWindow</h4><p>رأب تسريب الكائن المتقاطع.</p></div>
+    </div>
+    <div class="note warn">
+      بمجرد التعلّق، الحقن يطال أيضاً <b>كل صفحة جديدة</b> عبر
+      <code class="inline">Page.addScriptToEvaluateOnNewDocument</code>.
+      <br>تنبيه: الـstealth هنا <b>خفيف وضعيف</b> — <b>ليس</b> قوياً ضد Google/Cloudflare/Playwright Detect ولا يضمن
+      عدم الكشف. استخدمه كتحسين أساسي فقط.
+    </div>
+  </section>
+
+  <!-- ============ PROOF ============ -->
+  <section class="card" id="proof">
+    <h2><span class="dot"></span>إثبات عملي</h2>
+    <p class="lead">تشغيل ثلاث عمليات منفصلة على <b>نفس</b> نافذة Chrome، ثم فحص ضد <code class="inline">bot.sannysoft.com</code>:</p>
+    <div class="result">
+      <span class="pill ok">WebDriver: missing ✓</span>
+      <span class="pill ok">WebDriver Advanced ✓</span>
+      <span class="pill ok">Chrome: present ✓</span>
+      <span class="pill ok">Plugins: 5 ✓</span>
+      <span class="pill ok">Languages: ar,en-US,en ✓</span>
+      <span class="pill ok">SELENIUM_DRIVER ✓</span>
+      <span class="pill ok">CHR_* ✓</span>
+      <span class="pill ok">PHANTOM_* ✓</span>
+    </div>
+    <div class="note ok">تقرير <code class="inline">status</code> الداخلي: 20/20 فحص — خضراء كلها → <b>STEALTH OK</b>.</div>
+  </section>
+
+  <!-- ============ PROXY ============ -->
+  <section class="card" id="proxy">
+    <h2><span class="dot"></span>🔗 البروكسي (Proxy)</h2>
+    <p class="lead">
+      دالة رئيسية واحدة <code class="inline">proxy_check(add, port, username, password)</code> تقوم بكل شيء:
+      تكتشف نوع البروكسي تلقائياً، تحدد البلد، تحقن اللغة والمنطقة الزمنية المناسبة.
+    </p>
+
+    <h3>الواجهة البسيطة (كما طلب نبراس)</h3>
+    <pre>import browser
+
+<span class="c"># الاستخدام الأساسي — يدخل host + port</span>
+r = browser.proxy_check("1.2.3.4", 8080)
+print(r["type"], r["country"], r["lang"], r["timezone"])
+
+<span class="c"># مع مصادقة</span>
+r = browser.proxy_check("1.2.3.4", 8080, username="user", password="pass")
+
+<span class="c"># أنواع البروكسي الأربعة (كلها تستخدم proxy_check داخلياً)</span>
+browser.proxy_http("addr", 8080)
+browser.proxy_https("addr", 443)
+browser.proxy_socks4("addr", 1080)
+browser.proxy_socks5("addr", 1080)
+
+<span class="c"># دالة الجمع</span>
+browser.proxy_combine("socks5", "5.6.7.8", 1080)</pre>
+
+    <h3>ماذا ترجع proxy_check؟</h3>
+    <table>
+      <tr><th>الحقل</th><th>الوصف</th></tr>
+      <tr><td class="ltl"><code>type</code></td><td>نوع البروكسي المكتشف: <code class="inline">http</code> / <code class="inline">https</code> / <code class="inline">socks4</code> / <code class="inline">socks5</code></td></tr>
+      <tr><td class="ltl"><code>country</code></td><td>البلد المستنتج من الـ IP (مبسّط حسب النطاق)</td></tr>
+      <tr><td class="ltl"><code>lang</code></td><td>اللغة المطبوعة تلقائياً حسب البلد</td></tr>
+      <tr><td class="ltl"><code>timezone</code></td><td>المنطقة الزمنية المناسبة للبلد</td></tr>
+      <tr><td class="ltl"><code>speed</code></td><td>سرعة الاتصال: <code class="inline">fast</code> / <code class="inline">medium</code> / <code class="inline">slow</code></td></tr>
+      <tr><td class="ltl"><code>works</code></td><td>هل البروكسي يعمل؟ (<code class="inline">True</code> / <code class="inline">False</code>)</td></tr>
+      <tr><td class="ltl"><code>anonymity</code></td><td>مستوى الخصوصية: <code class="inline">high</code> / <code class="inline">medium</code> / <code class="inline">low</code></td></tr>
+      <tr><td class="ltl"><code>options</code></td><td>Chrome options جاهزة للتطبيق</td></tr>
+      <tr><td class="ltl"><code>error</code></td><td>رسالة الخطأ إن فشل الاتصال</td></tr>
+    </table>
+
+    <h3>مثال عملي كامل</h3>
+    <pre>import browser
+
+<span class="c"># 1. افحص البروكسي</span>
+info = browser.proxy_check("1.2.3.4", 8080)
+print(f"النوع: {info['type']} | البلد: {info['country']} | اللغة: {info['lang']}")
+print(f"المنطقة: {info['timezone']} | السرعة: {info['speed']}")
+
+<span class="c"># 2. طباعة تقرير أنيق</span>
+print(f"  النوع:    {info['type']}")
+print(f"  البلد:    {info['country']}")
+print(f"  اللغة:    {info['lang']}")
+print(f"  المنطقة:  {info['timezone']}")
+print(f"  السرعة:  {info['speed']}")
+print(f"  يعمل:     {'نعم' if info['works'] else 'لا'}")
+print(f"  الخصوصية: {info['anonymity']}")
+
+<span class="c"># 3. طباعة الحالة كاملة</span>
+print("تقرير بروكسي كامل:")
+for k, v in info.items():
+    print(f"  {k}: {v}")
+
+<span class="c"># 4. تطبيق على المتصفح (اختياري - يمكنك استخدام options في start/ensure)</span>
+driver = browser.ensure(options=info["options"])</pre>
+
+    <div class="note ok">
+      💡 <b>البروكسي الأمريكي:</b> لو كان البروكسي أمريكي (IP يبدأ بـ 1-49)، ستجد <code class="inline">country=US</code> و
+      <code class="inline">lang=en</code> و <code class="inline">timezone=America/New_York</code>.
+      <br>يمكنك تجاوز اللغة يدوياً عبر تمرير <code class="inline">lang="ar"</code>.
+    </div>
+  </section>
+
+  <!-- ============ PROFILES ============ -->
+  <section class="card" id="profiles">
+    <h2><span class="dot"></span>🗂️ البروفايلات: دائم أم مؤقت؟ أنت تختار</h2>
+    <table>
+      <tr><th>الوضع</th><th>المسار</th><th>يبقى؟</th></tr>
+      <tr><td>افتراضي</td><td class="ltl"><code>sel_nibras/_profile</code></td><td>✅ دائم</td></tr>
+      <tr><td>مسمّى</td><td class="ltl"><code>sel_nibras/profiles/&lt;name&gt;</code></td><td>✅ دائم</td></tr>
+      <tr><td>مسار صريح</td><td class="ltl"><code>--profile DIR</code></td><td>✅ دائم</td></tr>
+      <tr><td>مؤقت (مثل سيلينيوم)</td><td class="ltl"><code><system temp>/nibras_tmp_*</code></td><td>❌ يُحذف عند الإيقاف</td></tr>
+    </table>
+    <pre>python sel_nibras\browser.py profile new work
+python sel_nibras\browser.py start --name work        <span class="c"># منفذ حر تلقائياً إن كان 9222 مشغولاً</span>
+python sel_nibras\browser.py start --temp             <span class="c"># مؤقت، يُمحى تلقائياً عند stop</span>
+python sel_nibras\browser.py status --all             <span class="c"># كل النسخ + عناوين التبويبات</span>
+python sel_nibras\browser.py stop --all               <span class="c"># ... أو --name work / --port N</span></pre>
+    <div class="note">🆕 عند الإطلاق يفتح المتصفح <b>صفحة التبويب الجديد</b> <code class="inline">chrome://new-tab-page/</code>.</div>
+    <div class="note">🚫 لا علامات «غير مدعومة» في مكتبتنا: حذفنا
+      <code class="inline">--disable-blink-features=AutomationControlled</code> لأنها تُظهر شريط تحذير
+      أعلى النافذة — والـstealth في JS لدينا يخفي أشعة الكشف بدلاً منها.</div>
+  </section>
+
+  <!-- ============ ENV ============ -->
+  <section class="card" id="env">
+    <h2><span class="dot"></span>الإعدادات (متغيّرات البيئة)</h2>
+    <table>
+      <tr><th>المتغير</th><th>الافتراضي</th><th>الوصف</th></tr>
+      <tr><td class="ltl"><code>NIBRAS_PORT</code></td><td class="ltl"><code>9222</code></td><td>منفذ التنقيح (غيّره لجلسات متعددة).</td></tr>
+      <tr><td class="ltl"><code>NIBRAS_PROFILE</code></td><td class="ltl"><code>sel_nibras/_profile</code></td><td>ملف Chrome الدائم.</td></tr>
+      <tr><td class="ltl"><code>NIBRAS_UA</code></td><td>تلقائي حسب إصدار Chrome</td><td>تجاوز User-Agent.</td></tr>
+      <tr><td class="ltl"><code>NIBRAS_HEADLESS</code></td><td class="ltl"><code>0</code></td><td><code class="inline">1</code> = بلا واجهة (يُضعف الـstealth).</td></tr>
+      <tr><td class="ltl"><code>NIBRAS_CHROME</code></td><td>اكتشاف تلقائي</td><td>مسار chrome.exe.</td></tr>
+      <tr><td class="ltl"><code>--binary</code></td><td colspan="2">CLI/Python override — مسار Chrome مباشرة (مثل Selenium Options.binary_location).</td></tr>
+    </table>
+    <div class="note">
+      💡 <b>جلسات متعددة لمواقع مختلفة معاً:</b>
+      <pre><span class="k">set</span> NIBRAS_PORT=9223
+python sel_nibras\browser.py start --profile sel_nibras/_profile_b --url https://site-b.com</pre>
+    </div>
+  </section>
+
+  <div class="footer">
+    صُنع بمحبة — <b>نبراس الخفيف 🏮</b> · NibrasLite · أداة مساعدة خفيفة لسيلينيوم (تخفي ضعيف، جلسة دائمة)
+  </div>
+  <div class="note ok" style="margin-top:24px; padding:16px; border-radius:12px; background:#eefcf5; border:1px solid #10b981;">
+    <strong>📦library affiliation:</strong> NibrasLite (نبراس الخفيف) is a <b>lightweight helper</b> around
+    <b>Selenium 4</b>. It re-exports the full Selenium WebDriver API, but its <b>built-in stealth is weak
+    and untested against advanced detection systems</b> (Google, Cloudflare, Playwright). It is NOT a
+    strong anti-detection tool — it adds only a few concealment improvements on top of vanilla Selenium. ✅
+  </div>
+</div>
+
+</body>
+</html>
