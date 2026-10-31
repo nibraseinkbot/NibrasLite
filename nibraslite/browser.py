@@ -454,12 +454,20 @@ def attach(port: int | None = None, name: str | None = None,
     """Attach Selenium to a running Chrome (never owns it).
 
     With name=/profile= the port is auto-resolved from the running instance.
+    If no port/name/profile is given, finds any running NibrasLite Chrome
+    instance automatically.
     """
     if (name or profile) and port is None:
         found = find_port(name, profile)
         if found:
             port = found
-    port = port or DEFAULT_PORT
+    if port is None:
+        # Auto-detect any running NibrasLite Chrome instance
+        instances = running_instances()
+        if instances:
+            port = instances[0][0]
+        else:
+            port = DEFAULT_PORT
     if not is_alive(port):
         raise RuntimeError(f"no Chrome on port {port} - run: browser.py start")
     opts = Options()
