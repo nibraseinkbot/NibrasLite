@@ -426,10 +426,27 @@ def start(port: int | None = None, profile: Path | None = None,
              are merged after our defaults (so you keep stealth by default).
     Returns the debugging port actually used.
     """
+    # Capture whether caller explicitly requested a new profile/port before
+    # defaults are applied — this determines whether we should reuse an
+    # existing Chrome instance instead of launching a new one.
+    _want_new_profile = bool(name or profile)
+    _explicit_temp = temp is not None and temp
+    _want_anything = _want_new_profile or _explicit_temp or port is not None
+
     if temp is None:
         temp = profile is None
     wants_new = bool(name or profile or temp)
     port = port or DEFAULT_PORT
+
+    # If no specific port/name/profile requested and a Chrome is already
+    # running somewhere, reuse it — don't start a new window.
+    if not _want_anything:
+        instances = running_instances()
+        if instances:
+            reused_port, _ = instances[0]
+            print(f"[browser] reusing existing instance on port {reused_port}")
+            return reused_port
+
     if is_alive(port):
         if not wants_new:
             print(f"[browser] already running on port {port}")

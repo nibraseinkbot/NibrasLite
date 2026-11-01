@@ -50,7 +50,8 @@ pip install selenium>=4.48
 ### 1. تشغيل المتصفح والبدء
 
 ```python
-import browser
+from nibraslite import browser
+from selenium.webdriver.common.by import By
 
 # بدء جلسة دائمة + stealth في سطر واحد
 driver = browser.ensure("https://example.com")
@@ -70,7 +71,8 @@ python browser.py attach          # فتح REPL متصل بالنافذة الح
 ### 3. سكريبت مستقل
 
 ```python
-import browser
+from nibraslite import browser
+from selenium.webdriver.common.by import By
 
 driver = browser.attach()         # الربط بنافذة شغّالة (لا تبدأ واحدة جديدة)
 browser.stealth(driver)           # تفعيل إخفاء الأتمتة
@@ -80,7 +82,8 @@ driver.get("https://example.com")
 ### 4. مثال كامل مع كوكيز
 
 ```python
-import browser, json
+from nibraslite import browser
+import json
 from pathlib import Path
 
 driver = browser.ensure(apply_stealth=True)
@@ -249,7 +252,7 @@ browser.proxy_combine("socks5", "addr", port)
 
 ### كائن Browser (الواجهة الشاملة)
 ```python
-from browser import Browser, By
+from nibraslite import Browser, By
 b = Browser.ensure("https://example.com")
 b.find_element(By.ID, "q")       # → دالة سيلينيوم أصلية (marshaled تلقائياُ)
 b.click("#go")                   # → دالة مكتبتنا
