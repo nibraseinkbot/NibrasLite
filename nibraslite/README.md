@@ -1,6 +1,6 @@
 # NibrasLite — مكتبة مساعدة خفيفة لسيلينيوم بواجهة عربية
 
-![Python](https://img.shields.io/badge/Python-3.11%2B-blue.svg)
+![Python](https://img.shields.io/badge/Python-3.10%2B-blue.svg)
 ![Selenium](https://img.shields.io/badge/Selenium-4.48%2B-43B02A.svg)
 ![Platform](https://img.shields.io/badge/Platform-Windows_%7C_macOS_%7C_Linux-lightgrey.svg)
 ![License](https://img.shields.io/badge/License-MIT-green.svg)
