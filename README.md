@@ -179,16 +179,50 @@ permissions.query(notifications) // لا يعيد "denied"
 
 ### بروفايلات مسمّاة (تسجيل دخول محفوظ)
 
+```python
+from nibraslite import browser
 
+# متصفح #1 — حساب Work
+browser.start(name="work")
+driver_work = browser.attach(name="work")
+driver_work.get("https://gmail.com")
+
+# متصفح #2 — حساب Personal (منفذ مختلف تلقائياُ)
+browser.start(name="personal")
+driver_personal = browser.attach(name="personal")
+driver_personal.get("https://gmail.com")
+
+# كل driver يعمل بشكل مستقل تماماُ
+```
 
 ### بروفايلات مؤقتة (جلسة نظيفة كل مرة)
 
+```python
+from nibraslite import browser
 
+port1 = browser.start(temp=True)
+driver1 = browser.attach(port=port1)
+
+port2 = browser.start(temp=True)
+driver2 = browser.attach(port=port2)
+```
 
 ### عرض الحالات
 
+```python
+# كل النسخ الشغّالة
+print(browser.running_instances())
+# [(9222, '/.../profiles/work'), (9223, '/.../profiles/personal')]
 
+# البروفايلات الدائمة
+print(browser.list_profiles())
+# [('work', 12345), ('personal', 67890)]
+```
 
+> **ملاحظة:** عند استدعاء `start()` بدون أي معاملات تعيد استخدام النسخة الموجودة.
+> لفتح متصفح جديد يجب تمرير `name=...` أو `temp=True` أو `port=...`.
+> عندما لا تمرر `profile=` يكون `temp=True` افتراضيًا (نافذة نظيفة كل مرة).
+> عندما تمرر `profile=...` يكون `temp=False` (بروفايل دائم محفوظ).
 > **ملاحظة:** عند استدعاء `start()` بدون أي معاملات تُعيد استخدام النسخة الموجودة.
 > لفتح متصفح جديد يجب تمرير `name=...` أو `temp=True` أو `port=...`.
 
