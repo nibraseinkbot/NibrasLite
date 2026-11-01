@@ -94,6 +94,29 @@ ok, failed = browser.inject(driver, cookies)
 print(f"✅ {ok} كوكيز حقّنت | ❌ {failed} فشلت")
 ```
 
+### 5. 🔒 وضع الحماية المتقدمة (undetected-chromedriver)
+
+لتجاوز أنظمة الكشف المتقدمة (Google, Cloudflare, etc.)، يمكنك استخدام `undetected-chromedriver` المدمج:
+
+```bash
+pip install "nibraslite[stealth]"
+```
+
+```python
+from nibraslite import browser
+
+# وضع UC — يخفي آثار الأتمتة بشكل أقوى
+driver = browser.ensure_undetected("https://example.com")
+
+# نفس واجهة السيلينيوم الكاملة
+driver.find_element(By.NAME, "q").send_keys("nibras")
+
+# أو عبر الـ CLI
+# python browser.py start --undetected
+```
+
+> ⚠️ **ملاحظة:** وضع UC يعمل بجلسة واحدة فقط — لا يدعم Multi-instance ولا `attach()` بعد التشغيل. لكل جلسة جديدة يُفتح Chrome مستقل.
+
 ---
 
 ## 📁 هيكل الملفات

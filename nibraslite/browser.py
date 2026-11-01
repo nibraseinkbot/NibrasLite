@@ -95,6 +95,10 @@ from selenium.common.exceptions import (
 # writable data.  When running from source (editable install or local),
 # BASE stays at the module directory so _profile/ and output/ work as before.
 import importlib.util as _ilu
+try:
+    import undetected_chromedriver as _uc
+except ImportError:
+    _uc = None
 _pkg_dir = Path(_ilu.find_spec("nibraslite").origin).parent if _ilu.find_spec("nibraslite") else None
 _local_mode = _pkg_dir is not None and (_pkg_dir / "_profile").is_dir()
 _NIBRAS_DATA_DIR = Path(os.environ.get(
@@ -544,6 +548,99 @@ def ensure(url: str | None = None, port: int | None = None, profile: Path | None
     if apply_stealth:
         stealth(driver)
     return driver
+
+
+# --------------------------------------------------------------------------- #
+# Undetected Chrome (opt-in enhanced anti-detection)
+# --------------------------------------------------------------------------- #
+def _create_undetected_driver(
+    headless: bool = False,
+    ua: str | None = None,
+    binary: str | None = None,
+    name: str | None = None,
+    temp: bool = False,
+) -> "webdriver.Chrome":
+    """Create a uc.Chrome driver with NibrasLite profile management.
+
+    Unlike start()/attach(), this creates its own Chrome process via
+    undetected-chromedriver. It does NOT integrate with the multi-instance
+    architecture (running_instances / find_port etc.).
+    """
+    if _uc is None:
+        raise ImportError(
+            "undetected-chromedriver is not installed. "
+            "Install it with: pip install undetected-chromedriver"
+        )
+
+    prof = resolve_profile(None, name, temp)
+    version_main = None
+    _ver_override = os.environ.get("NIBRAS_CHROME_VERSION")
+    if _ver_override:
+        try:
+            version_main = int(_ver_override)
+        except ValueError:
+            pass
+
+    opts = _uc.ChromeOptions()
+    if ua:
+        opts.add_argument(f"--user-agent={ua}")
+    opts.add_argument("--lang=en")
+
+    driver = _uc.Chrome(
+        options=opts,
+        user_data_dir=str(prof),
+        browser_executable_path=binary,
+        headless=headless,
+        version_main=version_main,
+        suppress_welcome=True,
+        use_subprocess=True,
+    )
+
+    # Apply NibrasLite's JS-based stealth on the initial page for layered
+    # defense (UC patches chromedriver; this covers navigator-level signals).
+    try:
+        stealth(driver, all_tabs=False)
+    except Exception:
+        pass
+
+    return driver
+
+
+def ensure_undetected(
+    url: str | None = None,
+    headless: bool | None = None,
+    ua: str | None = None,
+    name: str | None = None,
+    temp: bool = False,
+    apply_stealth: bool = True,
+    lang: str | None = None,
+    binary: str | None = None,
+) -> "Browser":
+    """One-call UC-based entry point with anti-detection.
+
+    Uses undetected-chromedriver for stronger evasion of bot-detection
+    systems. Unlike ensure(), this does NOT support multi-instance:
+    each call launches a fresh Chrome process.
+
+    name / temp behave like ensure(): name creates a named persistent
+    profile, temp creates a throwaway profile.
+
+    Returns a Browser wrapper (same API as ensure()).
+    """
+    if headless is None:
+        headless = HEADLESS
+
+    driver = _create_undetected_driver(
+        headless=headless, ua=ua, binary=binary,
+        name=name, temp=temp,
+    )
+
+    if url:
+        driver.get(url)
+    if apply_stealth:
+        stealth(driver)
+
+    return Browser(driver)
 
 
 def close_browser(driver) -> None:
@@ -1281,6 +1378,10 @@ class Browser:
     def ensure(cls, url: str | None = None, **kw):
         return cls(ensure(url, **kw))
 
+    @classmethod
+    def ensure_undetected(cls, url: str | None = None, **kw):
+        return cls(ensure_undetected(url, **kw))
+
     # --- helpers -----------------------------------------------------------
     def goto(self, url): goto(self.driver, url); return self
     def find_all(self, sel): return find(self.driver, sel)
@@ -1951,6 +2052,8 @@ def main() -> int:
                          help="path to chrome executable (overrides auto-detection)")
     p_start.add_argument("--options-json", default=None,
                          help="path to JSON file describing Selenium Options arguments; merged with defaults")
+    p_start.add_argument("--undetected", action="store_true",
+                         help="use undetected-chromedriver for stronger anti-detection (single-session only)")
 
     common(sub.add_parser("attach"))
 
@@ -1971,6 +2074,17 @@ def main() -> int:
     args = ap.parse_args()
 
     if args.cmd == "start":
+        if args.undetected:
+            if _uc is None:
+                print("[browser] error: undetected-chromedriver not installed. Install with: pip install undetected-chromedriver")
+                return 1
+            print("[browser] starting undetected Chrome (single-session, no multi-instance support)")
+            b = ensure_undetected(
+                url=args.url, headless=args.headless or HEADLESS, ua=args.ua,
+                name=args.name, temp=args.temp, binary=args.binary,
+            )
+            print(f"[browser] ready (undetected mode, port N/A)")
+            return 0
         opts = None
         if args.options_json:
             import json as _json
@@ -2063,6 +2177,8 @@ __all__ = [
     "cookies_load", "cookies_save", "inject", "clear", "list_cookies", "from_devtools_table",
     # stealth
     "stealth", "check_stealth", "print_stealth",
+    # undetected mode
+    "ensure_undetected",
     # elements / waiting
     "parse_sel", "wait", "wait_all", "wait_gone", "exist", "visible", "clickable", "find", "one",
     # actions
