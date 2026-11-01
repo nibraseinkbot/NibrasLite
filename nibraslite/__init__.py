@@ -1,7 +1,7 @@
 """NibrasLite — lightweight persistent Selenium helper."""
 from __future__ import annotations
 
-__version__ = "0.1.4"
+__version__ = "0.1.5"
 
 # Convenience re-exports so users can do: from nibraslite import Browser, By
 from nibraslite.browser import (

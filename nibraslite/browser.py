@@ -573,7 +573,7 @@ def _create_undetected_driver(
             "Install it with: pip install undetected-chromedriver"
         )
 
-    prof = resolve_profile(None, name, temp)
+    prof = resolve_profile(profile, name, temp)
     version_main = None
     _ver_override = os.environ.get("NIBRAS_CHROME_VERSION")
     if _ver_override:
