@@ -433,6 +433,9 @@ def start(port: int | None = None, profile: Path | None = None,
     _explicit_temp = temp is not None and temp
     _want_anything = _want_new_profile or _explicit_temp or port is not None
 
+    # Default: temp=True unless a profile path was explicitly given.
+    # This means every start() without --profile opens a fresh Chrome window.
+    # Pass profile=... to keep a persistent profile.
     if temp is None:
         temp = profile is None
     wants_new = bool(name or profile or temp)
@@ -525,6 +528,9 @@ def ensure(url: str | None = None, port: int | None = None, profile: Path | None
              are merged after our defaults (so you keep stealth by default).
     """
     port = port or DEFAULT_PORT
+    # Default: temp=True unless a profile path was explicitly given.
+    # This means every start() without --profile opens a fresh Chrome window.
+    # Pass profile=... to keep a persistent profile.
     if temp is None:
         temp = profile is None
     if not is_alive(port):

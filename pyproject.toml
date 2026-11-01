@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "nibraslite"
-version = "0.1.2"
+version = "0.1.3"
 description = "A lightweight Selenium 4 helper providing persistent sessions and simple stealth options."
 readme = "README.md"
 license = {text = "MIT"}
