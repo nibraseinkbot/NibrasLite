@@ -557,6 +557,7 @@ def _create_undetected_driver(
     headless: bool = False,
     ua: str | None = None,
     binary: str | None = None,
+    profile: Path | None = None,
     name: str | None = None,
     temp: bool = False,
 ) -> "webdriver.Chrome":
@@ -610,8 +611,9 @@ def ensure_undetected(
     url: str | None = None,
     headless: bool | None = None,
     ua: str | None = None,
+    profile: Path | None = None,
     name: str | None = None,
-    temp: bool = False,
+    temp: bool | None = None,
     apply_stealth: bool = True,
     lang: str | None = None,
     binary: str | None = None,
@@ -622,17 +624,19 @@ def ensure_undetected(
     systems. Unlike ensure(), this does NOT support multi-instance:
     each call launches a fresh Chrome process.
 
-    name / temp behave like ensure(): name creates a named persistent
-    profile, temp creates a throwaway profile.
+    profile/name/temp behave like ensure(): explicit profile -> persistent,
+    name -> profiles/<name>, temp -> throwaway, default -> temp=True.
 
     Returns a Browser wrapper (same API as ensure()).
     """
     if headless is None:
         headless = HEADLESS
+    if temp is None:
+        temp = profile is None and name is None
 
     driver = _create_undetected_driver(
         headless=headless, ua=ua, binary=binary,
-        name=name, temp=temp,
+        name=name, temp=temp, profile=profile,
     )
 
     if url:
